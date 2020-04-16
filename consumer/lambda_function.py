@@ -94,7 +94,7 @@ def names_to_wikipedia(names):
 
     wikipedia_snippit = []
     for name in names:
-        wikipedia_snippit.append(wikipedia.summary(name, sentences=1))
+        wikipedia_snippit.append(wikipedia.summary(name, sentences=3))
     df = pd.DataFrame(
         {
             'names':names,
@@ -102,6 +102,17 @@ def names_to_wikipedia(names):
         }
     )
     return df
+
+def extract_keyphrases(row):
+    LOG.info(f"Extracting keyphrases for {row}")
+    comprehend = boto3.client(service_name='comprehend')
+    payload = comprehend.detect_key_phrases(Text=row, LanguageCode='en')
+    phrases = payload['KeyPhrases']
+    str=''
+    for phrase in phrases:
+        str = str + phrase['Text'] + ', '
+    str = str.rstrip(', ')
+    return str
 
 def create_sentiment(row):
     """Uses AWS Comprehend to Create Sentiments on a DataFrame"""
@@ -117,6 +128,7 @@ def apply_sentiment(df, column="wikipedia_snippit"):
     """Uses Pandas Apply to Create Sentiment Analysis"""
 
     df['Sentiment'] = df[column].apply(create_sentiment)
+    df['Key Phrases'] = df[column].apply(extract_keyphrases)
     return df
 
 ### S3 ###
