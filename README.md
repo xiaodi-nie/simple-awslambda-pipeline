@@ -4,7 +4,11 @@ This is a Duke ECE590-24 course project. In this project I reproduced a simple s
 
 ![pipeline](img/serverless-pipeline.png)
 
-First a producer lambda function will be invoked every minute, and it would access a DynamoDB table, grab the entries(which are a bunch of company names), and send them as messages into a SQS queue. Every time there're new messages coming into that SQS queue, a consumer lambda function would be invoked. The consumer would get the first line of the wikipedia result of each of the messages, and do a sentiment analysis with it via AWS Comprehend. The results would then be put into a S3 bucket in csv files.
+First a producer lambda function will be invoked every minute, and it would access a DynamoDB table, grab the entries(which are a bunch of company names), and send them as messages into a SQS queue. Every time there're new messages coming into that SQS queue, a consumer lambda function would be invoked. The consumer would get the first line of the wikipedia result of each of the messages, and do a sentiment analysis with it via AWS Comprehend. 
+
+I added some more NLP capabilities with the help of Comprehend and extracted the key phrases from the wiki contents. 
+
+The results would then be put into a S3 bucket in csv files.
 
 ### General Steps
 
